@@ -22,12 +22,20 @@ func main() {
 }
 
 func run() error {
+	var debug bool
 	var kubeconfig string
 	var master string
 
+	// setup args
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "absolute path to the kubeconfig file")
+	flag.BoolVar(&debug, "debug", false, "Print debug info")
 	flag.StringVar(&master, "master", "", "master url")
 	flag.Parse()
+
+	// setup logging
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	}
 
 	config, err := clientcmd.BuildConfigFromFlags(master, kubeconfig)
 	if err != nil {
