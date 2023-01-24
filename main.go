@@ -8,6 +8,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -62,5 +65,10 @@ func run() error {
 		routePortHandler.Run(stop)
 	}()
 
-	return nil
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGTERM)
+	select {
+	case <-signalCh:
+		return nil
+	}
 }
